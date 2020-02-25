@@ -3,6 +3,7 @@ require_once('controllers/base_controller.php');
 require_once("models/Contest.php");
 require_once("models/Problem.php");
 require_once("models/SubmitHistory.php");
+require_once("models/DoHistory.php");
 class ContestController extends BaseController
 {
   function __construct()
@@ -70,10 +71,36 @@ class ContestController extends BaseController
 		$contest = Contest::findById($_GET['id']);
 		$listId = explode(" ", $contest['listIdProblem']);
 		shuffle($listId);
-		$problem = Problem::findById($listId[0]);
 		$isSubmit = (isset($_SESSION['user'])) ? SubmitHistory::getSubmitHistoryByUserAndIdContest($_SESSION['user'], $_GET['id']) : null;
+		
 		$isEnd = ((strtotime($contest['startTime']." + ".$contest['duringTime']." minutes" ) - strtotime("now")) < 0) ? true : false;
 		$isStart = ((strtotime($contest['startTime']) - strtotime("now")) > 0) ? false : true;
+		$ans='';
+		if(isset($_SESSION['user']))
+		{
+			$doHis = DoHistory::getDoHistoryByUserAndIdContest($_SESSION['user'], $contest['id']);
+			if(!$doHis)
+			{
+				if($isSubmit) $problem = Problem::findById($isSubmit['idProblem']);
+				else $problem = Problem::findById($listId[0]);
+				$ans = str_repeat('_', $problem['numQuess']);
+				$doHistory = array(
+					'user' => $_SESSION['user'],
+					'idProblem' => $problem['id'],
+					'answer' => $ans,
+					'idContest' => $contest['id'],
+					'time' => date("Y-m-d H:i:s")
+				);
+				if(!$isSubmit && $isStart && !$isEnd) DoHistory::updateDoHistory($doHistory);
+			}
+			else
+			{
+				$problem = Problem::findById($doHis['idProblem']);
+				$ans = $doHis['answer'];
+			}
+		}
+		
+		
 		$headProb = $problem['name'];
 		$bodyProb = ($isStart) ? '<div class="embed-responsive embed-responsive-16by9">
 				  <iframe class="embed-responsive-item" src="../../public/pdfviewer/web/viewer.html?file='.$problem["link"].'"></iframe>
@@ -114,6 +141,9 @@ class ContestController extends BaseController
 								if($isSubmit['answer'][$i-1] == $j) $formSubmit=$formSubmit.' checked';
 								else $formSubmit=$formSubmit.' disabled';
 							}
+							else {
+								if($ans[$i-1] == $j) $formSubmit=$formSubmit.' checked';
+							}
 					$formSubmit=$formSubmit.'></div></td>';
 			}
 			$formSubmit = $formSubmit.'</tr>';
@@ -131,9 +161,9 @@ class ContestController extends BaseController
 			}
 			else
 			{
-			if(isset($_POST['submit']))
+			if($isStart && !$isEnd) 
 			{
-				if($isStart && !$isEnd) 
+				if(isset($_POST['submit']))
 				{
 					$num = $problem['numQuess'];
 					$score = 0;
@@ -160,19 +190,23 @@ class ContestController extends BaseController
 						'time' => date("Y-m-d H:i:s")
 						);
 					SubmitHistory::addSubmitHistory($submitHistory);
-					
+					DoHistory::deleteDoHistory($_SESSION['user'], $contest['id'], $problem['id']);
 					$headSubmit = 'Kết quả';
 					$bodySubmit = "Đúng : <b><font color='blue'>".$score."/".$problem['numQuess']."</font></b> câu<br>Điểm : <b><font color='red'>".$score*10/$problem['numQuess']."</font></b>";
-					
-					$formSubmit='<form method="POST">'.$formSubmit.'<p class="text-center"><button type="submit" class="btn btn-success" id="submit" name="submit">Nộp bài</button></p>';
-					
+
 				}
 				else
 				{
-					$headSubmit = 'Lỗi!';
-					$bodySubmit = 'Cuộc thi chưa bắt đầu hoặc đã kết thúc';
+					$formSubmit='<form method="POST">'.$formSubmit.'<p class="text-center"><button type="submit" class="btn btn-success" id="submit" name="submit">Nộp bài</button></p></form>';
 				}
 			}
+			else
+			{
+				$headSubmit = 'Lỗi!';
+				if(!$isStart) $bodySubmit = 'Cuộc thi chưa bắt đầu';
+				else if($isEnd) $bodySubmit = 'Cuộc thi đã kết thúc';
+			}
+			
 			}
 		}
 		else

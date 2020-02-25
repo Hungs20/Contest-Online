@@ -4,6 +4,7 @@ $controllers = array(
   'contest' => ['index', 'create', 'show', 'rank', 'play'],
   'problem' => ['index', 'create', 'show', 'rank'],
   'history' => ['index', 'show'],
+  'dohistory' => ['index'],
   'layouts' => ['right']
 ); // Các controllers trong hệ thống và các action có thể gọi ra từ controller đó.
 

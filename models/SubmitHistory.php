@@ -14,9 +14,10 @@ class SubmitHistory
 	static function addSubmitHistory($submitHistory)
 	{
 		$db = DB::getInstance();
-		$query = "INSERT INTO `submit_history`(`time`, `user`, `idProblem`, `score`, `answer`, `idContest`) VALUES ('".$submitHistory['time']."', '".$submitHistory['user']."', ".$submitHistory['idProblem'].", ".$submitHistory['score'].", '".$submitHistory['answer']."', ".$submitHistory['idContest'].")";
-		$req = $db->query($query);
-		return $query;
+		$query = "INSERT INTO `submit_history`(`time`, `user`, `idProblem`, `score`, `answer`, `idContest`) VALUES (?,?,?,?,?,?)";
+		$req = $db->prepare($query);
+		$res = $req->execute([$submitHistory['time'], $submitHistory['user'], $submitHistory['idProblem'], $submitHistory['score'], $submitHistory['answer'], $submitHistory['idContest']]);
+		
 	}
 	static function getAll()
 	{

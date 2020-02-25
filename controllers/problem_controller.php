@@ -2,6 +2,7 @@
 require_once('controllers/base_controller.php');
 require_once("models/Problem.php");
 require_once("models/SubmitHistory.php");
+require_once("models/DoHistory.php");
 class ProblemController extends BaseController
 {
   function __construct()
@@ -71,37 +72,125 @@ class ProblemController extends BaseController
 	{
 		$problem = array('name'=>'Bài thi');
 		$problem = Problem::findById($_GET['id']);
-		if(isset($_POST['submit']))
+		$ans = str_repeat('_', $problem['numQuess']);
+		if(isset($_SESSION['user']))
 		{
-			$num = $problem['numQuess'];
-			$score = 0;
-			$ans = "";
-			for($i = 1; $i <= $num; $i++)
+			$doHis = DoHistory::getDoHistoryByUserAndIdContestAndIdProb($_SESSION['user'], 0, $problem['id']);
+			if(!$doHis)
 			{
-				if(isset($_POST["$i"]))
-				{
-					if($_POST["$i"] == $problem['answer'][$i-1]) $score++;
-					$ans = $ans.$_POST["$i"];
-				}
-				else $ans = $ans.'_';
-			}
-			if($score*10/$problem['numQuess'] > $problem['maxScore']) Problem::updateMaxScore($problem['id'],$score*10/$problem['numQuess']);
-			Problem::updateThamgia($problem['id']);
-			$submitHistory = array(
-				'user' => $_SESSION['user'],
-				'idProblem' => $problem['id'],
-				'score' => $score*10/$problem['numQuess'],
-				'answer' => $ans,
-				'idContest' => 0,
-				'time' => date("Y-m-d H:i:s")
+				$doHistory = array(
+					'user' => $_SESSION['user'],
+					'idProblem' => $problem['id'],
+					'answer' => $ans,
+					'idContest' => 0,
+					'time' => date("Y-m-d H:i:s")
 				);
-			SubmitHistory::addSubmitHistory($submitHistory);
+				DoHistory::updateDoHistory($doHistory);
+			}
+			else
+			{
+				$ans = $doHis['answer'];
+			}
 		}
+		$headProb = $problem['name'];
+		$bodyProb = '<div class="embed-responsive embed-responsive-16by9">
+				  <iframe class="embed-responsive-item" src="../../public/pdfviewer/web/viewer.html?file='.$problem["link"].'"></iframe>
+				</div>' ;
+		$footProb = 'Chúc các bạn làm bài tốt <3';
+		$headSubmit = 'Trả lời';
+		$bodySubmit = '';
+		$footSubmit = '';
+		$formSubmit = '<table class="table table-sm">
+						  <thead>
+							<tr>
+							  <th scope="col">#</th>
+							  <th scope="col">A</th>
+							  <th scope="col">B</th>
+							  <th scope="col">C</th>
+							  <th scope="col">D</th>
+							</tr>
+						  </thead>
+						  <tbody>';
+		for($i = 1; $i <= $problem['numQuess']; $i++)
+		{
+			$formSubmit = $formSubmit.'<tr><th scope="row">'.$i.'</th>';
+			for($j = 'A'; $j <= 'D'; $j++)
+			{
+				$formSubmit = $formSubmit.'<td><div class="form-check">
+						  <input class="form-check-input position-static" type="radio" name="'.$i.'" value="'.$j.'" aria-label="'.$j.'"';
+							
+							if(isset($_POST['submit'])){
+								if(isset($_POST["$i"]) && $_POST["$i"] == $j) $formSubmit=$formSubmit.' checked';  
+								else $formSubmit = $formSubmit.' disabled';
+							}
+							else {
+								if($ans[$i-1] == $j) $formSubmit=$formSubmit.' checked';
+							}
+					$formSubmit=$formSubmit.'></div></td>';
+			}
+			$formSubmit = $formSubmit.'</tr>';
+			
+		}
+		$formSubmit = $formSubmit.'</tbody></table>';
+		
+		if(isset($_SESSION['user']))
+		{
+			if(isset($_POST['submit']))
+			{
+				$num = $problem['numQuess'];
+				$score = 0;
+				$ans = "";
+				for($i = 1; $i <= $num; $i++)
+				{
+					if(isset($_POST["$i"]))
+					{
+						if($_POST["$i"] == $problem['answer'][$i-1]) $score++;
+						$ans = $ans.$_POST["$i"];
+					}
+					else $ans = $ans.'_';
+				}
+				if($score*10/$problem['numQuess'] > $problem['maxScore']) Problem::updateMaxScore($problem['id'],$score*10/$problem['numQuess']);
+				Problem::updateThamgia($problem['id']);
+				$submitHistory = array(
+					'user' => $_SESSION['user'],
+					'idProblem' => $problem['id'],
+					'score' => $score*10/$problem['numQuess'],
+					'answer' => $ans,
+					'idContest' => 0,
+					'time' => date("Y-m-d H:i:s")
+					);
+				SubmitHistory::addSubmitHistory($submitHistory);
+				DoHistory::deleteDoHistory($_SESSION['user'], 0, $problem['id']);
+				$headSubmit = 'Kết quả';
+				$bodySubmit = "Đúng : <b><font color='blue'>".$score."/".$problem['numQuess']."</font></b> câu<br>Điểm : <b><font color='red'>".$score*10/$problem['numQuess']."</font></b>";
+				
+				$formSubmit=$formSubmit.'<p class="text-center"><a href="" class="btn btn-success" >Làm lại</a></p>';
+				
+			}
+			else
+			{
+				$formSubmit='<form method="POST">'.$formSubmit.'<p class="text-center"><button type="submit" class="btn btn-success" id="submit" name="submit">Nộp bài</button></p></form>';
+			}
+			
+		}
+		else
+		{
+			$formSubmit = '';
+			$bodySubmit = 'Bạn cần đăng nhập để trả lời';
+		}
+	
 		
 		$data = array(
 		'title' => $problem['name'],
 		'problem' => $problem,
 		'score' => @$score,
+		'headProb' => $headProb,
+		'bodyProb' => $bodyProb,
+		'footProb' => $footProb,
+		'headSubmit' => $headSubmit,
+		'bodySubmit' => $bodySubmit,
+		'footSubmit' => $footSubmit,
+		'formSubmit' => $formSubmit
 		);
 		$this->render('show', $data);
 	}
