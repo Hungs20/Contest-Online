@@ -17,7 +17,7 @@ class HistoryController extends BaseController
 	foreach($list as $i => $item)
 	{
 		$user_model = new User();
-		$user = $user_model->getByUsername($item['user'])->fetchColumn();
+		$user = $user_model->getByUsername($item['user']);
 		$problem = Problem::findById($item['idProblem']);
 		if($item['idContest']) $problem = Contest::findById($item['idContest']);
 		$list[$i]['idUser'] = $user['id'];

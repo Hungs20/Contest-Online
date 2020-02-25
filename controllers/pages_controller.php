@@ -15,8 +15,7 @@ class PagesController extends BaseController
 	  if(isset($_SESSION['user']))
 	  {
 		  $username = $_SESSION['user'];
-		  $user_model = new User();
-		  $user = $user_model->getByUsername($username)->fetch();
+		  $user = User::getByUsername($username);
 		  $isLogin = true;
 	  }
     $data = array(
@@ -38,9 +37,8 @@ class PagesController extends BaseController
 	{
 		if($_POST['username'] != '' && $_POST['password'] != '' && $_POST['fullname'] != '' && $_POST['email'] != '' && $_POST['birthday'] != '' && $_POST['gender'] != '')
 		{
-			$user_model = new User();
-			$r = $user_model->getByUsername(htmlentities($_POST['username']))->fetchColumn();
-			if($r == 0)
+			$r = User::getByUsername(htmlentities($_POST['username']));
+			if(!$r)
 			{
 				$user = array(
 					'username' => htmlentities($_POST['username']),
@@ -56,7 +54,7 @@ class PagesController extends BaseController
 					'type' => 0,
 					'avatar' => 'default.png'
 					);
-				$user_model->signup($user);
+				User::signup($user);
 				$status = 1;
 				$err = "Đăng kí thành công";
 					
@@ -83,17 +81,16 @@ class PagesController extends BaseController
 	{
 		if($_POST['username'] != '' && $_POST['password'] != '' )
 		{
-			$user_model = new User();
-			$r = $user_model->getByUsername(htmlentities($_POST['username']))->fetchColumn();
-			if($r > 0)
+			$r = User::getByUsername($_POST['username']);
+			if($r)
 			{
-				$row = $user_model->getByUsername(htmlentities($_POST['username']))->fetch( PDO::FETCH_ASSOC );
-				if($row['password'] == htmlentities($_POST['password']))
+				$row = User::getByUsername($_POST['username']);
+				if($row['password'] == $_POST['password'])
 				{
 					$err = "Đăng nhập thành công";
 					$_SESSION['user'] = $row['username'];
 					$_SESSION['userId'] = $row['id'];
-					$user_model->updateTimeLogin($row['id']);
+					User::updateTimeLogin($row['id']);
 					$status = 1;
 				}
 				else $err = "Tài khoản hoặc mật khẩu không chính xác";	
