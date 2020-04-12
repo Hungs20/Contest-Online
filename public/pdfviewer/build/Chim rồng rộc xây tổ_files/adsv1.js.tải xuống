@@ -1,0 +1,2 @@
+var check_block_ads="undefined"!=typeof cpx_cookie?cpx_cookie.cookie_get("br_block_ads"):"";
+if(!ZONE_ADS){var poly_data={};poly_data.folder=1==PageHot?2E4:PAGE_FOLDER,poly_data.site=46,poly_data.type=1,poly_data.times=0,function(){var e=document.getElementsByTagName("script")[0],t=(Math.random(),document.createElement("script"));t.type="text/javascript",t.async=!0,t.src=("https:"==document.location.protocol?"https://":"http://")+("1"==check_block_ads?"core.vnecdn.com/js/dv/delivery_noblock_pc.js":"core.polyad.net/js/dv/delivery_pc.js"),e.parentNode.appendChild(t)}()};

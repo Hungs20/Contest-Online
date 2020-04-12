@@ -93,6 +93,9 @@ class ProblemController extends BaseController
 			}
 		}
 		$headProb = $problem['name'];
+		/*<div class="embed-responsive embed-responsive-16by9">
+				  <iframe class="embed-responsive-item" src="../../public/pdfviewer/web/viewer.html?file='.$problem["link"].'"></iframe>
+				</div>*/
 		$bodyProb = '<div class="embed-responsive embed-responsive-16by9">
 				  <iframe class="embed-responsive-item" src="../../public/pdfviewer/web/viewer.html?file='.$problem["link"].'"></iframe>
 				</div>' ;
@@ -100,8 +103,8 @@ class ProblemController extends BaseController
 		$headSubmit = 'Trả lời';
 		$bodySubmit = '';
 		$footSubmit = '';
-		$formSubmit = '<table class="table table-sm">
-						  <thead>
+		$formSubmit = '<div class="table-responsive"><table class="table" >
+						  <!--<thead>
 							<tr>
 							  <th scope="col">#</th>
 							  <th scope="col">A</th>
@@ -109,14 +112,14 @@ class ProblemController extends BaseController
 							  <th scope="col">C</th>
 							  <th scope="col">D</th>
 							</tr>
-						  </thead>
+						  </thead> --!>
 						  <tbody>';
 		for($i = 1; $i <= $problem['numQuess']; $i++)
 		{
 			$formSubmit = $formSubmit.'<tr><th scope="row">'.$i.'</th>';
 			for($j = 'A'; $j <= 'D'; $j++)
 			{
-				$formSubmit = $formSubmit.'<td><div class="form-check">
+				$formSubmit = $formSubmit.'<td><label>'.$j.'</label><div class="form-check">
 						  <input class="form-check-input position-static" type="radio" name="'.$i.'" value="'.$j.'" aria-label="'.$j.'"';
 							
 							if(isset($_POST['submit'])){
@@ -131,7 +134,7 @@ class ProblemController extends BaseController
 			$formSubmit = $formSubmit.'</tr>';
 			
 		}
-		$formSubmit = $formSubmit.'</tbody></table>';
+		$formSubmit = $formSubmit.'</tbody></table></div>';
 		
 		if(isset($_SESSION['user']))
 		{

@@ -1,0 +1,1 @@
+var fc={shuffle:function(r){for(var n,o,t=r.length;t;n=Math.floor(Math.random()*t),o=r[--t],r[t]=r[n],r[n]=o);return r},countObject:function(r){var n,o=0;for(n in r)r.hasOwnProperty(n)&&o++;return o},sliceobj:function(r,n,o){var t={},f=0;for(var a in r)f>=n&&f<o&&(t[a]=r[a]),f++;return t}};

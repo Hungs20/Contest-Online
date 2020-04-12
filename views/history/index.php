@@ -2,14 +2,14 @@
 	include_once './views/layouts/header.php';
 ?>
 
-			
+		<link href="../../public/css/dataTables.bootstrap4.min.css" rel="stylesheet" media="all">
 		<div class="col-12 col-md-9">
 		
 		<!-- History-->
-		<li class="list-group-item list-group-item-primary text-center"><h5>Nhật kí làm bài</h5></li>
 		 <div class="table-responsive">
-			<table class="table table-bordered table-hover text-center">
-				<thead class="thead-light">
+			<table class="table table-striped table-bordered table-hover text-center" id = "history">
+				<caption style="caption-side: top;">Nhật kí làm bài</caption>
+				<thead class="thead-dark">
 					<tr>
 						<th scope="col">#</th>
 						<th scope="col">Thời gian</th>
@@ -55,3 +55,15 @@
 
 	include_once './views/layouts/footer.php';
 ?>
+<script src="../../public/js/jquery.dataTables.min.js"></script>
+	<script src="../../public/js/dataTables.bootstrap4.min.js"></script>
+	<script>
+	$(document).ready(function() {
+    $('#history').DataTable( {
+        "language": {
+            "url": "../../public/Vietnamese.json"
+        },
+		"order": [[ 0, "desc" ]]
+    } );
+} );
+</script>

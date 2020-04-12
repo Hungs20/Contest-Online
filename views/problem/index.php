@@ -1,15 +1,16 @@
 <?php
 	include_once './views/layouts/header.php';
+	
 ?>
-
-		<div class="col-12 col-md-9">
+		<link href="../../public/css/dataTables.bootstrap4.min.css" rel="stylesheet" media="all">
 		
-		<!-- All Problem-->
+		<div class="col-12 col-md-9">
 		<a href = "index.php?controller=problem&action=create" class = "btn btn-primary">Thêm bài tập</a><br><br>
-		<li class="list-group-item list-group-item-primary text-center"><h5>Danh sách luyện tập</h5></li>
+		<!-- All Problem-->
 		 <div class="table-responsive">
-			<table class="table table-bordered table-hover text-center">
-				<thead class="thead-light">
+			<table class="table table-striped table-bordered table-hover text-center" id = "problem">
+			<caption style="caption-side: top;">Danh sách luyện tập</caption>
+				<thead class="thead-dark">
 					<tr>
 						<th scope="col">#</th>
 						<th scope="col">Tên bài</th>
@@ -35,10 +36,10 @@
 							<?=@$i['nameAuthor']?>
 						</td>
 						<td>
-							<?=@$i['maxScore']?>
+							<a href = "index.php?controller=rank&idCt=0&idPb=<?=@$i['id']?>"><?=@$i['maxScore']?></a>
 						</td>
 						<td>
-							<?=@$i['thamgia']?>
+							<a href = "index.php?controller=history&idPb=<?=@$i['id']?>"><?=@$i['thamgia']?></a>
 						</td>
 						
 					</tr>
@@ -49,8 +50,20 @@
 			</table>
 			<!--END All Problem-->
 		</div>
-		</div>
+		</div>	
 <?php
 
 	include_once './views/layouts/footer.php';
 ?>
+<script src="../../public/js/jquery.dataTables.min.js"></script>
+	<script src="../../public/js/dataTables.bootstrap4.min.js"></script>
+	<script>
+	$(document).ready(function() {
+    $('#problem').DataTable( {
+        "language": {
+            "url": "../../public/Vietnamese.json"
+        },
+		"order": [[ 0, "desc" ]]
+    } );
+} );
+</script>

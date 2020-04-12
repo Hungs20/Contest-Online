@@ -1,16 +1,16 @@
 <?php
 	include_once './views/layouts/header.php';
 ?>
-
+		<link href="../../public/css/dataTables.bootstrap4.min.css" rel="stylesheet" media="all">
 		<div class="col-12 col-md-9 ">
 		
 		<a href = "index.php?controller=contest&action=create" class = "btn btn-primary">Tạo cuộc thi</a><br><br>
 		<!-- New Contest-->
 		<?php if(@$newContest){ ?>
-		 <li class="list-group-item list-group-item-primary text-center"><h5>Cuộc thi mới</h5></li>
 		 <div class="table-responsive">
-		<table class="table table-bordered table-hover text-center">
-				<thead class="thead-light">
+			<table class="table table-striped table-bordered table-hover text-center">
+				<caption style="caption-side: top;">Cuộc thi mới</caption>
+				<thead class="thead-dark">
 					<tr>
 						<th scope="col">Cuộc thi</th>
 						<th scope="col">Tác giả</th>
@@ -43,7 +43,7 @@
 							<p class="text-secondary">
 							<?php
 								$secondsLeft  = strtotime($i['startTime']) - time();
-								if($secondsLeft <= 0) echo '<a href="/index.php?controller=contest&action=rank&id='.$i['id'].'">Bảng xếp hạng</a><br><small>Đang diễn ra</small>';
+								if($secondsLeft <= 0) echo '<a href="/index.php?controller=rank&action=index&idCt='.$i['id'].'">Bảng xếp hạng</a><br><small>Đang diễn ra</small>';
 								else 
 								{
 									$days = floor($secondsLeft / (60*60*24));
@@ -56,7 +56,7 @@
 							</p>
 						</td>
 						<td>
-							<?=@$i['thamgia']?>
+							<a href = "index.php?controller=history&idCt=<?=@$i['id']?>"><?=@$i['thamgia']?></a>
 						</td>
 					</tr>
 					<?php
@@ -70,10 +70,10 @@
 		
 		
 		<!-- All Contest-->
-		<li class="list-group-item list-group-item-primary text-center"><h5>Cuộc thi đã kết thúc</h5></li>
 		<div class="table-responsive">
-			<table class="table table-bordered table-hover text-center">
-				<thead class="thead-light">
+			<table class="table table-striped table-bordered table-hover text-center" id = "contest">
+				<caption style="caption-side: top;">Cuộc thi đã kết thúc</caption>
+				<thead class="thead-dark">
 					<tr>
 						<th scope="col">Cuộc thi</th>
 						<th scope="col">Tác giả</th>
@@ -105,13 +105,13 @@
 						<td>
 							<p class="text-secondary">
 							<?php
-								echo '<a href="/index.php?controller=contest&action=rank&id='.$i['id'].'">Bảng xếp hạng</a>';
+								echo '<a href="/index.php?controller=rank&idCt='.$i['id'].'">Bảng xếp hạng</a>';
 								
 							?>
 							</p>
 						</td>
 						<td>
-							<?=@$i['thamgia']?>
+							<a href = "index.php?controller=history&idCt=<?=@$i['id']?>"><?=@$i['thamgia']?></a>
 						</td>
 					</tr>
 					<?php
@@ -126,3 +126,15 @@
 
 	include_once './views/layouts/footer.php';
 ?>
+<script src="../../public/js/jquery.dataTables.min.js"></script>
+	<script src="../../public/js/dataTables.bootstrap4.min.js"></script>
+	<script>
+	$(document).ready(function() {
+    $('#contest').DataTable( {
+        "language": {
+            "url": "../../public/Vietnamese.json"
+        },
+		"order": [[ 0, "desc" ]]
+    } );
+} );
+</script>

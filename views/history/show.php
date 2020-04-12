@@ -6,7 +6,7 @@
 		
 		<div class="col-12 col-md-9 ">
 			<!-- DE BAI-->
-			<div class="card border-info sticky-top">
+			<div class="card border-info  sticky-top sticky-offset">
 			  <div class="card-header text-center">
 				<?=@$problem['name']?>
 			  </div>	
@@ -21,7 +21,7 @@
 			</div>
 		<br>
 		</div>
-		<div class="col-12 col-md-3">
+		<div class="col-12 col-md-3 sticky-top sticky-offset">
 			<!-- TRA LOI-->
 			<div class="card border-info">
 				  <div class="card-header text-center">

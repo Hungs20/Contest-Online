@@ -13,11 +13,12 @@ class HistoryController extends BaseController
 	
   public function index()
   {
-	$list = SubmitHistory::getAll();
+	 if(isset($_GET['idCt'])) $list = SubmitHistory::findByIdContest($_GET['idCt']);
+	 else if(isset($_GET['idPb'])) $list = SubmitHistory::findByIdProblem($_GET['idPb']);
+	else $list = SubmitHistory::getAll();
 	foreach($list as $i => $item)
 	{
-		$user_model = new User();
-		$user = $user_model->getByUsername($item['user']);
+		$user = User::getByUsername($item['user']);
 		$problem = Problem::findById($item['idProblem']);
 		if($item['idContest']) $problem = Contest::findById($item['idContest']);
 		$list[$i]['idUser'] = $user['id'];

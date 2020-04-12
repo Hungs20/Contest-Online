@@ -4,20 +4,18 @@
 		
 		
 		
-		<div class="col-12 col-md-9 ">
-			<!-- DE BAI-->
-			<div class="card border-info sticky-top">
-			  <div class="card-header text-center">
+		<div class="col-12 col-md-9">
+			<!-- DE BAI--
+			<div class="card border-info sticky-top sticky-offset">
+			  <div class="card-header text-center">-->
 				<?=@$headProb?>
-			  </div>	
-			  <div class="card-body text-center">
+			 <!-- </div>	
+			  -->
 			  <?=@$bodyProb?>
-			  </div>
-			  <div class="card-footer text-center">
+			  <!--<div class="card-footer text-center" >-->
 			  <?=@$footProb?>
-			  </div>
-			</div>
-		<br>
+			  <!--</div>
+		</div> -->
 		</div>
 		<div class="col-12 col-md-3">
 			<!-- TRA LOI-->
@@ -35,22 +33,25 @@
 			  </div>
 				</div>
 			<br>
+			<!-- Rank-->
+			<span id = "ranking"></span>
 			</div>
-		
 	</div>
 </div>
 <!-- Jquery JS-->
 
     <script src="../../public/js/jquery-3.4.1.js"></script>
 	<script src="../../public/js/bootstrap.min.js"></script>
-	<script>
-// when the DOM is ready
-$(document).ready(function() {
-
-	var idPb = <?=@$problem['id']?>;
-		$('.form-check-input').click(function(e) {
-			$.post('index.php?controller=dohistory&action=index',{idCt : 0, idPb : idPb, num : $(this).attr('name')-1, val : $(this).val() }, function(data) {
-			});
-		});
-});
+	
+<script>
+$(document).ready(function(){ 
+		var url_string = window.location.href;
+var url = new URL(url_string);
+var control = url.searchParams.get("controller");
+var idCt = 0;
+var idPb = 0;
+if(control == 'contest') idCt = url.searchParams.get("id");
+else if(control == 'problem') idPb = url.searchParams.get("id");
+                    $("#ranking").load('index.php?controller=rank&action=api&idCt='+idCt+'&idPb='+idPb); 
+            }); 
 </script>

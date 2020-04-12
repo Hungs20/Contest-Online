@@ -1,11 +1,14 @@
 <?php
 $controllers = array(
-  'pages' => ['home', 'error', 'signup', 'login'],
+  'pages' => ['home', 'error', 'signup', 'login', 'logout'],
   'contest' => ['index', 'create', 'show', 'rank', 'play'],
   'problem' => ['index', 'create', 'show', 'rank'],
   'history' => ['index', 'show'],
   'dohistory' => ['index'],
-  'layouts' => ['right']
+  'rank' => ['index', 'api'],
+  'class' => ['index', 'show', 'create'],
+  'admin' => ['index', 'clss'],
+  'layouts' => ['right', 'online']
 ); // Các controllers trong hệ thống và các action có thể gọi ra từ controller đó.
 
 // Nếu các tham số nhận được từ URL không hợp lệ (không thuộc list controller và action có thể gọi

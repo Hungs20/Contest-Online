@@ -19,6 +19,7 @@ class PagesController extends BaseController
 		  $isLogin = true;
 	  }
     $data = array(
+	'title' => 'Trang chủ',
       'user' => @$user,
       'isLogin' => $isLogin
     );
@@ -28,6 +29,10 @@ class PagesController extends BaseController
   public function error()
   {
     $this->render('error');
+  }
+  public function logout()
+  {
+    $this->render('logout');
   }
   public function signup()
   {	
@@ -90,7 +95,7 @@ class PagesController extends BaseController
 					$err = "Đăng nhập thành công";
 					$_SESSION['user'] = $row['username'];
 					$_SESSION['userId'] = $row['id'];
-					User::updateTimeLogin($row['id']);
+					User::updateTimeLogin($row['username']);
 					$status = 1;
 				}
 				else $err = "Tài khoản hoặc mật khẩu không chính xác";	

@@ -3,8 +3,8 @@
 			<!-- THONG BAO -->
 			<?php if(@$newContest['name']){
 				?>
-			<div class="card border-info text-center">
-				<div class="card-header">
+			<div class="card border-danger text-center">
+				<div class="card-header bg-warning text-white border-danger">
 					<h6>Chú ý</h6>
 				</div>
 				<div class="card-body text-info">
@@ -29,15 +29,4 @@
 			<br>
 			<?php } ?>
 			<!--END THONG BAO-->
-				<!-- RANK -->
-				<div class="card  border-info">
-					<div class="card-header text-center">
-						Bảng xếp hạng
-					</div>
-					<ul class="list-group list-group-flush">
-						<li class="list-group-item">Hung</li>
-						<li class="list-group-item">Admin</li>
-						<li class="list-group-item">Bot</li>
-					</ul>
-				</div>
-				<!--END RANK-->
+				

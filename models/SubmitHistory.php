@@ -39,7 +39,7 @@ class SubmitHistory
 		$res=$req->execute(array('id' => $id));
 		
 		$item = $req->fetch();
-		if (isset($item['id'])) {
+		if (isset($item)) {
 		  return $item;
 		}
 		return null;
@@ -49,10 +49,10 @@ class SubmitHistory
 		$db = DB::getInstance();
 		$req = $db->prepare("SELECT * FROM submit_history WHERE idUser = :idUser");
 		
-		$res=$req->execute(array('id' => $id));
+		$res=$req->execute(array('id' => $idUser));
 		
-		$item = $req->fetch();
-		if (isset($item['id'])) {
+		$item = $req->fetchAll();
+		if (isset($item)) {
 		  return $item;
 		}
 		return null;
@@ -63,10 +63,23 @@ class SubmitHistory
 		$db = DB::getInstance();
 		$req = $db->prepare("SELECT * FROM submit_history WHERE idProblem = :idProblem");
 		
-		$res=$req->execute(array('id' => $id));
+		$res=$req->execute(array('idProblem' => $idProblem));
 		
-		$item = $req->fetch();
-		if (isset($item['id'])) {
+		$item = $req->fetchAll();
+		if (isset($item)) {
+		  return $item;
+		}
+		return null;
+	}
+	static function findByIdContest($idContest)
+	{
+		$db = DB::getInstance();
+		$req = $db->prepare("SELECT * FROM submit_history WHERE idContest = :idContest");
+		
+		$res=$req->execute(array('idContest' => $idContest));
+		
+		$item = $req->fetchAll();
+		if (isset($item)) {
 		  return $item;
 		}
 		return null;
@@ -80,6 +93,45 @@ class SubmitHistory
 		
 		$item = $req->fetch();
 		if (isset($item['id'])) {
+		  return $item;
+		}
+		return null;
+	}
+	static function getRankByIdContestAndIdProblem($idContest, $idProblem, $start, $num)
+	{
+		$db = DB::getInstance();
+		$req = $db->prepare("SELECT *, MAX(score) max_score FROM `submit_history` WHERE idContest = :idContest AND  idProblem = :idProblem GROUP BY `idContest`,`idProblem`,`user` ORDER BY max_score DESC LIMIT :start, :num");
+		
+		$res=$req->execute(array('idContest' => $idContest, 'idProblem' => $idProblem, 'start' => $start, 'num' => $num));
+		
+		$item = $req->fetchAll();
+		if (isset($item)) {
+		  return $item;
+		}
+		return null;
+	}
+	static function getRankByIdContest($idContest, $start, $num)
+	{
+		$db = DB::getInstance();
+		$req = $db->prepare("SELECT *, MAX(score) max_score FROM `submit_history` WHERE idContest = :idContest GROUP BY `idContest`,`idProblem`,`user` ORDER BY max_score DESC LIMIT :start, :num");
+		
+		$res=$req->execute(array('idContest' => $idContest, 'start' => $start, 'num' => $num));
+		
+		$item = $req->fetchAll();
+		if (isset($item)) {
+		  return $item;
+		}
+		return null;
+	}
+	static function getRankAll($start, $num)
+	{
+		$db = DB::getInstance();
+		$req = $db->prepare("SELECT *, SUM(max_score) max_score FROM ( SELECT *, MAX(`score`) as max_score FROM `submit_history` GROUP BY `idContest`,`idProblem`,`user`) as max_scores GROUP BY `user` ORDER BY max_score DESC LIMIT :start, :num");
+		//echo $req;
+		$res=$req->execute(array('start' => $start, 'num' => $num));
+		
+		$item = $req->fetchAll();
+		if (isset($item)) {
 		  return $item;
 		}
 		return null;

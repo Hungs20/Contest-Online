@@ -1,0 +1,1 @@
+var browser_not_block_ads=1E3;(function(){try{var b=document.getElementById("block-ads");if("undefined"==typeof b||null==b){var a=document.createElement("div");a.id="block-ads";a.style.display="none";document.getElementsByTagName("body")[0].appendChild(a)}}catch(c){}})();
